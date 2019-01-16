@@ -1,0 +1,24 @@
+header {
+  border-bottom: 1px solid black;
+  text-align: right;
+  padding: 10px;
+  font-size: 50px;
+  font-family: "Times New Roman", Times, serif;
+  color: #ff9933;
+}
+.headerDiv {
+  margin-bottom: 10px;
+}
+.mainDiv {
+  display: flex;
+}
+.list {
+  margin-top: 300px;
+}
+.guestBook {
+  margin-left: 10px;
+  text-decoration: none;
+}
+.jar {
+  margin-left: 100px;
+}
