@@ -19,7 +19,6 @@ const app = (req, res) => {
   }
 
   readFile(request, function(err, content) {
-    console.log(content);
     res.write(content);
     res.end();
   });
