@@ -1,8 +1,10 @@
+const PAGE_NOT_FOUND = "Page Not Found";
+
 const { readFile } = require("fs");
 
 const getRequest = function(url) {
-  if (url == "/") return "./index.html";
-  return "." + url;
+  if (url == "/") return "./public_html/index.html";
+  return "./public_html" + url;
 };
 
 const sendResponse = function(res, content, status) {
@@ -14,7 +16,7 @@ const sendResponse = function(res, content, status) {
 const handleRequest = function(request, res) {
   readFile(request, function(err, content) {
     if (err) {
-      sendResponse(res, "not found", 404);
+      sendResponse(res, PAGE_NOT_FOUND, 404);
       return;
     }
     sendResponse(res, content, 200);
