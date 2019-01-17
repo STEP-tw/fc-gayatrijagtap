@@ -2,7 +2,7 @@ const Sheeghra = require("../sheeghra");
 const app = new Sheeghra();
 
 const NOT_FOUND = "Page Not Found";
-const { readFile } = require("fs");
+const { readFile, appendFile } = require("fs");
 
 const getRequest = function(url) {
   if (url == "/") return "./public_html/index.html";
@@ -35,14 +35,25 @@ const handleRequest = function(req, res) {
   });
 };
 
+const appendToGuestBook = function(req, res, content) {
+  readFile("./public_html/guestBook.html", function(err, content1) {
+    let response = content1 + content;
+    res.write(response);
+    res.end();
+  });
+};
+
 const getFormData = function(req, res) {
   let formData = req.body.match(/name\=(.*)\&comment=(.*)/);
   let name = formData[1];
   let comment = formData[2];
-  let date = new Date();
-  let response = "name:" + name + "\ncomment:" + comment + "\ndate:" + date;
-  res.write(response);
-  res.end();
+  let date = new Date().toLocaleString();
+  let response =
+    "name:" + name + "<br/>comment:" + comment + "<br/>date:" + date + "<br/>";
+  appendFile("./src/commentLog", response, "utf8", function(err) {});
+  readFile("./src/commentLog", function(err, content) {
+    appendToGuestBook(req, res, content);
+  });
 };
 
 app.use(readBody);
