@@ -2,7 +2,7 @@ const Sheeghra = require("../sheeghra");
 const app = new Sheeghra();
 
 const NOT_FOUND = "Page Not Found";
-const { readFile, appendFile } = require("fs");
+const { readFile, writeFile } = require("fs");
 
 const getRequest = function(url) {
   if (url == "/") return "./public_html/index.html";
@@ -35,24 +35,41 @@ const handleRequest = function(req, res) {
   });
 };
 
-const appendToGuestBook = function(req, res, content) {
-  readFile("./public_html/guestBook.html", function(err, content1) {
-    let response = content1 + content;
+const appendToGuestBook = function(req, res, commentLog) {
+  readFile("./public_html/guestBook.html", function(err, guestBookHtml) {
+    let response = guestBookHtml + commentLog;
     res.write(response);
     res.end();
   });
 };
 
-const getFormData = function(req, res) {
-  let formData = req.body.match(/name\=(.*)\&comment=(.*)/);
-  let name = formData[1];
-  let comment = formData[2];
+const getLatestCommentLog = function(name, comment, date, commentLog) {
+  return (
+    "name:" +
+    name +
+    "<br/>comment:" +
+    comment +
+    "<br/>date:" +
+    date +
+    "<hr>" +
+    commentLog
+  );
+};
+
+const parseFormArgs = function(data) {
+  let formArgs = data.match(/name\=(.*)\&comment=(.*)/);
+  let name = formArgs[1];
+  let comment = formArgs[2];
   let date = new Date().toLocaleString();
-  let response =
-    "name:" + name + "<br/>comment:" + comment + "<br/>date:" + date + "<br/>";
-  appendFile("./src/commentLog", response, "utf8", function(err) {});
-  readFile("./src/commentLog", function(err, content) {
-    appendToGuestBook(req, res, content);
+  return { name, comment, date };
+};
+
+const getFormData = function(req, res) {
+  let { name, comment, date } = parseFormArgs(req.body);
+  readFile("./src/commentLog", function(err, commentLog) {
+    let latestCommentLog = getLatestCommentLog(name, comment, date, commentLog);
+    writeFile("./src/commentLog", latestCommentLog, "utf8", function(err) {});
+    appendToGuestBook(req, res, latestCommentLog);
   });
 };
 
