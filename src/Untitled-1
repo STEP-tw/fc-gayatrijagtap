@@ -1,0 +1,16 @@
+req.on("data", chunk => {
+    body += chunk;
+    console.log(body);
+  });
+  req.on("end", () => {
+    if (req.url == "/submitted") {
+      let formData = body.match(/name\=(.*)\&comment=(.*)/);
+      let name = formData[1];
+      let comment = formData[2];
+      let date = new Date();
+      let response = "name:" + name + "\ncomment:" + comment + "\ndate:" + date;
+      res.write(response);
+      res.end();
+      return;
+    }
+  });
