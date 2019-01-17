@@ -19,3 +19,7 @@ header {
 .jar {
   margin-left: 100px;
 }
+form {
+  border-bottom: 1px solid black;
+  padding: 20px;
+}

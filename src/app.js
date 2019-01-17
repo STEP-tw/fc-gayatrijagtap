@@ -1,5 +1,4 @@
 const PAGE_NOT_FOUND = "Page Not Found";
-
 const { readFile } = require("fs");
 
 const getRequest = function(url) {
