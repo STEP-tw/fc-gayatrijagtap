@@ -43,17 +43,16 @@ const appendToGuestBook = function(req, res, commentLog) {
   });
 };
 
-const getLatestCommentLog = function(name, comment, date, commentLog) {
+const createCommentLogHTML = function(commentLog) {
+  let { name, comment, date } = commentLog;
   return (
-    "name:" +
-    name +
-    "<br/>comment:" +
-    comment +
-    "<br/>date:" +
-    date +
-    "<hr>" +
-    commentLog
+    "name:" + name + "<br/>comment:" + comment + "<br/>date:" + date + "<hr>"
   );
+};
+
+const getLatestCommentLog = function(parsedCommentLog) {
+  let latestCommentLog = parsedCommentLog.map(createCommentLogHTML);
+  return latestCommentLog.join("");
 };
 
 const parseFormArgs = function(data) {
@@ -64,17 +63,32 @@ const parseFormArgs = function(data) {
   return { name, comment, date };
 };
 
-const getFormData = function(req, res) {
-  let { name, comment, date } = parseFormArgs(req.body);
-  readFile("./src/commentLog", function(err, commentLog) {
-    let latestCommentLog = getLatestCommentLog(name, comment, date, commentLog);
-    writeFile("./src/commentLog", latestCommentLog, "utf8", function(err) {});
-    appendToGuestBook(req, res, latestCommentLog);
+const writeLatestCommentLog = function(parsedCommentLog) {
+  writeFile(
+    "./src/commentLog.json",
+    JSON.stringify(parsedCommentLog),
+    "utf8",
+    function(err) {}
+  );
+};
+
+const handleCommentLog = function(req, res, commentLog, formData) {
+  let parsedCommentLog = JSON.parse(commentLog);
+  parsedCommentLog.unshift(formData);
+  let latestCommentLog = getLatestCommentLog(parsedCommentLog);
+  writeLatestCommentLog(parsedCommentLog);
+  appendToGuestBook(req, res, latestCommentLog);
+};
+
+const handleForm = function(req, res) {
+  let formData = parseFormArgs(req.body);
+  readFile("./src/commentLog.json", function(err, commentLog) {
+    handleCommentLog(req, res, commentLog, formData);
   });
 };
 
 app.use(readBody);
-app.post("/submitted", getFormData);
+app.post("/submitted", handleForm);
 app.use(handleRequest);
 
 module.exports = app.handleRequest.bind(app);
