@@ -4,7 +4,7 @@ const isMatching = (req, route) => {
   if (route.url && req.url != route.url) return false;
   return true;
 };
-class Sheeghra {
+class RequestHandler {
   constructor() {
     this.routes = [];
   }
@@ -33,4 +33,4 @@ class Sheeghra {
     next();
   }
 }
-module.exports = Sheeghra;
+module.exports = RequestHandler;

@@ -1,5 +1,5 @@
-const Sheeghra = require("../sheeghra");
-const app = new Sheeghra();
+const RequestHandler = require("../requestHandler");
+const app = new RequestHandler();
 
 const NOT_FOUND = "Page Not Found";
 const { readFile, writeFile } = require("fs");
