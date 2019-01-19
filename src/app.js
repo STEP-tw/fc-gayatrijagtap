@@ -1,7 +1,12 @@
 const RequestHandler = require("../requestHandler");
+const {
+  readBody,
+  sendResponse,
+  getRequest,
+  handleRequest
+} = require("./serverUtil");
 const app = new RequestHandler();
 
-const NOT_FOUND = "Page Not Found";
 const { readFile, writeFile } = require("fs");
 
 class Comment {
@@ -45,46 +50,14 @@ class Comments {
       function(err) {}
     );
   }
+
+  appendToGuestBook(req, res, commentLog) {
+    readFile("./public_html/guestBook.html", function(err, guestBookHtml) {
+      let response = guestBookHtml + commentLog;
+      sendResponse(res, response, 200);
+    });
+  }
 }
-
-const getRequest = function(url) {
-  if (url == "/") return "./public_html/index.html";
-  return "./public_html" + url;
-};
-
-const readBody = (req, res, next) => {
-  let content = "";
-  req.on("data", chunk => (content += chunk));
-  req.on("end", () => {
-    req.body = content;
-    next();
-  });
-};
-
-const sendResponse = function(res, content, status) {
-  res.statusCode = status;
-  res.write(content);
-  res.end();
-};
-
-const handleRequest = function(req, res) {
-  let request = getRequest(req.url);
-  readFile(request, function(err, content) {
-    if (err) {
-      sendResponse(res, NOT_FOUND, 404);
-      return;
-    }
-    sendResponse(res, content, 200);
-  });
-};
-
-const appendToGuestBook = function(req, res, commentLog) {
-  readFile("./public_html/guestBook.html", function(err, guestBookHtml) {
-    let response = guestBookHtml + commentLog;
-    res.write(response);
-    res.end();
-  });
-};
 
 const parseFormArgs = function(formData) {
   let formArgs = formData.match(/name\=(.*)\&comment=(.*)/);
@@ -100,7 +73,7 @@ const handleCommentLog = function(req, res, commentLog, formData) {
   comments.add(formData);
   let latestCommentLog = comments.getLatestCommentLog();
   comments.writeLatestCommentLog();
-  appendToGuestBook(req, res, latestCommentLog);
+  comments.appendToGuestBook(req, res, latestCommentLog);
 };
 
 const handleForm = function(req, res) {
