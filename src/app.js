@@ -4,6 +4,49 @@ const app = new RequestHandler();
 const NOT_FOUND = "Page Not Found";
 const { readFile, writeFile } = require("fs");
 
+class Comment {
+  constructor(name, comment) {
+    this.name = name;
+    this.comment = comment;
+    this.date = new Date().toLocaleString();
+  }
+}
+
+class Comments {
+  constructor(comments) {
+    this.comments = comments;
+  }
+
+  parseComments() {
+    this.comments = JSON.parse(this.comments);
+  }
+
+  add(comment) {
+    this.comments.unshift(comment);
+  }
+
+  getLatestCommentLog() {
+    let latestCommentLog = this.comments.map(this.createCommentLogHTML);
+    return latestCommentLog.join("");
+  }
+
+  createCommentLogHTML(commentLog) {
+    let { name, comment, date } = commentLog;
+    return (
+      "name:" + name + "<br/>comment:" + comment + "<br/>date:" + date + "<hr>"
+    );
+  }
+
+  writeLatestCommentLog() {
+    writeFile(
+      "./src/commentLog.json",
+      JSON.stringify(this.comments),
+      "utf8",
+      function(err) {}
+    );
+  }
+}
+
 const getRequest = function(url) {
   if (url == "/") return "./public_html/index.html";
   return "./public_html" + url;
@@ -43,40 +86,20 @@ const appendToGuestBook = function(req, res, commentLog) {
   });
 };
 
-const createCommentLogHTML = function(commentLog) {
-  let { name, comment, date } = commentLog;
-  return (
-    "name:" + name + "<br/>comment:" + comment + "<br/>date:" + date + "<hr>"
-  );
-};
-
-const getLatestCommentLog = function(parsedCommentLog) {
-  let latestCommentLog = parsedCommentLog.map(createCommentLogHTML);
-  return latestCommentLog.join("");
-};
-
-const parseFormArgs = function(data) {
-  let formArgs = data.match(/name\=(.*)\&comment=(.*)/);
+const parseFormArgs = function(formData) {
+  let formArgs = formData.match(/name\=(.*)\&comment=(.*)/);
   let name = formArgs[1];
   let comment = formArgs[2];
-  let date = new Date().toLocaleString();
-  return { name, comment, date };
-};
-
-const writeLatestCommentLog = function(parsedCommentLog) {
-  writeFile(
-    "./src/commentLog.json",
-    JSON.stringify(parsedCommentLog),
-    "utf8",
-    function(err) {}
-  );
+  let commentLog = new Comment(name, comment);
+  return commentLog;
 };
 
 const handleCommentLog = function(req, res, commentLog, formData) {
-  let parsedCommentLog = JSON.parse(commentLog);
-  parsedCommentLog.unshift(formData);
-  let latestCommentLog = getLatestCommentLog(parsedCommentLog);
-  writeLatestCommentLog(parsedCommentLog);
+  let comments = new Comments(commentLog);
+  comments.parseComments();
+  comments.add(formData);
+  let latestCommentLog = comments.getLatestCommentLog();
+  comments.writeLatestCommentLog();
   appendToGuestBook(req, res, latestCommentLog);
 };
 
