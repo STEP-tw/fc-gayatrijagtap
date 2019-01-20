@@ -44,7 +44,7 @@ class Comments {
 
   writeLatestCommentLog() {
     writeFile(
-      "./src/commentLog.json",
+      "./public_html/commentLog.json",
       JSON.stringify(this.comments),
       "utf8",
       function(err) {}
@@ -78,7 +78,7 @@ const handleCommentLog = function(req, res, commentLog, formData) {
 
 const handleForm = function(req, res) {
   let formData = parseFormArgs(req.body);
-  readFile("./src/commentLog.json", function(err, commentLog) {
+  readFile("./public_html/commentLog.json", function(err, commentLog) {
     handleCommentLog(req, res, commentLog, formData);
   });
 };
