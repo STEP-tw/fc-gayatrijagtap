@@ -10,38 +10,40 @@ const app = new RequestHandler();
 const { readFile, writeFile } = require("fs");
 
 class Comment {
+  /**
+   * Represents a Comment.
+   * @constructor
+   */
   constructor(name, comment) {
     this.name = name;
     this.comment = comment;
     this.date = new Date().toLocaleString();
   }
 }
-
 class Comments {
+  /**
+   * Represents the Comments.
+   * @constructor
+   */
   constructor(comments) {
     this.comments = comments;
   }
-
   parseComments() {
     this.comments = JSON.parse(this.comments);
   }
-
   add(comment) {
     this.comments.unshift(comment);
   }
-
   getLatestCommentLog() {
     let latestCommentLog = this.comments.map(this.createCommentLogHTML);
     return latestCommentLog.join("");
   }
-
   createCommentLogHTML(commentLog) {
     let { name, comment, date } = commentLog;
     return (
       "name:" + name + "<br/>comment:" + comment + "<br/>date:" + date + "<hr>"
     );
   }
-
   writeLatestCommentLog() {
     writeFile(
       "./public_html/commentLog.json",
@@ -50,7 +52,6 @@ class Comments {
       function(err) {}
     );
   }
-
   appendToGuestBook(req, res, commentLog) {
     readFile("./public_html/guestBook.html", function(err, guestBookHtml) {
       let response = guestBookHtml + commentLog;
@@ -59,6 +60,7 @@ class Comments {
   }
 }
 
+/** This is a description of parseFormArgs function. */
 const parseFormArgs = function(formData) {
   let formArgs = formData.match(/name\=(.*)\&comment=(.*)/);
   let name = formArgs[1];
@@ -67,6 +69,7 @@ const parseFormArgs = function(formData) {
   return commentLog;
 };
 
+/** This is a description of handleCommentLog function. */
 const handleCommentLog = function(req, res, commentLog, formData) {
   let comments = new Comments(commentLog);
   comments.parseComments();
@@ -76,6 +79,7 @@ const handleCommentLog = function(req, res, commentLog, formData) {
   comments.appendToGuestBook(req, res, latestCommentLog);
 };
 
+/** This is a description of handleForm function. */
 const handleForm = function(req, res) {
   let formData = parseFormArgs(req.body);
   readFile("./public_html/commentLog.json", function(err, commentLog) {
