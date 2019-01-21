@@ -5,7 +5,7 @@ const createHtml = function(commentLog) {
   );
 };
 
-const getBody = document => document.getElementById("body");
+const getComments = document => document.getElementById("comments");
 
 const refresh = function() {
   fetch("commentLog.json")
@@ -14,8 +14,6 @@ const refresh = function() {
     })
     .then(function(myjson) {
       let myhtml = myjson.map(createHtml);
-      let guestBookHtml = getBody(document).innerHTML;
-      let guestBookBody = guestBookHtml.split("name:")[0];
-      getBody(document).innerHTML = guestBookBody + myhtml.join("");
+      getComments(document).innerHTML = myhtml.join("");
     });
 };

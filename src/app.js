@@ -1,64 +1,12 @@
 const RequestHandler = require("../requestHandler");
-const {
-  readBody,
-  sendResponse,
-  getRequest,
-  handleRequest
-} = require("./serverUtil");
+
+const { readBody, handleRequest } = require("./serverUtil");
+
 const app = new RequestHandler();
 
-const { readFile, writeFile } = require("fs");
+const { readFile } = require("fs");
 
-class Comment {
-  /**
-   * Represents a Comment.
-   * @constructor
-   */
-  constructor(name, comment) {
-    this.name = name;
-    this.comment = comment;
-    this.date = new Date().toLocaleString();
-  }
-}
-class Comments {
-  /**
-   * Represents the Comments.
-   * @constructor
-   */
-  constructor(comments) {
-    this.comments = comments;
-  }
-  parseComments() {
-    this.comments = JSON.parse(this.comments);
-  }
-  add(comment) {
-    this.comments.unshift(comment);
-  }
-  getLatestCommentLog() {
-    let latestCommentLog = this.comments.map(this.createCommentLogHTML);
-    return latestCommentLog.join("");
-  }
-  createCommentLogHTML(commentLog) {
-    let { name, comment, date } = commentLog;
-    return (
-      "name:" + name + "<br/>comment:" + comment + "<br/>date:" + date + "<hr>"
-    );
-  }
-  writeLatestCommentLog() {
-    writeFile(
-      "./public_html/commentLog.json",
-      JSON.stringify(this.comments),
-      "utf8",
-      function(err) {}
-    );
-  }
-  appendToGuestBook(req, res, commentLog) {
-    readFile("./public_html/guestBook.html", function(err, guestBookHtml) {
-      let response = guestBookHtml + commentLog;
-      sendResponse(res, response, 200);
-    });
-  }
-}
+const { Comment, Comments } = require("./comments");
 
 /** This is a description of parseFormArgs function. */
 const parseFormArgs = function(formData) {
