@@ -57,12 +57,14 @@ class Comments {
   }
 
   /** This is a description of appendToGuestBook function. */
-  appendToGuestBook(req, res, commentLog) {
+  appendToGuestBook(req, res, commentLog, loginHtml, name) {
     readFile("./public_html/guestBook.html", "utf8", function(
       err,
       guestBookHtml
     ) {
       let response = guestBookHtml.replace("#comment_section#", commentLog);
+      response = response.replace("#form#", loginHtml);
+      response = response.replace("#name#", name);
       sendResponse(res, response, 200);
     });
   }

@@ -8,14 +8,14 @@
   <body id="body">
     <header><a href="index.html"><<</a>Guest Book</header>
     <h1>Leave a comment</h1>
-    <form method="POST" action="/submitted">
-      <label>Name:</label> <input type="text" name="name" /> <br />
-      <label>Comment:</label>
-      <textarea name="comment" id="comment" cols="15" rows="3"></textarea>
-      <br />
-      <input type="submit" />
-    </form>
-    <button onclick="refresh()"">&#x21bb</button>
+    <div id="formDiv">
+      #form#
+    <!-- <form method="POST" action="/login"> -->
+      <!-- <label>Name:</label> <input type="text" name="name" /> -->
+      <!-- <input type="submit" value="login"><br /> -->
+    <!-- </form> -->
+  </div>
+    <button onclick="refresh()">&#x21bb</button>
     <div id="comments">#comment_section#</div>
   </body>
 </html>

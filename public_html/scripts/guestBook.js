@@ -17,3 +17,5 @@ const refresh = function() {
       getComments(document).innerHTML = myhtml.join("");
     });
 };
+
+window.onload = refresh;

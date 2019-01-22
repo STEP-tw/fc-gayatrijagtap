@@ -26,6 +26,10 @@ const sendResponse = function(res, content, status) {
 
 /** This is a description of handleRequest function. */
 const handleRequest = function(req, res) {
+  if (req.url == "/guestBook.html") {
+    res.end();
+    return;
+  }
   let request = getRequest(req.url);
   readFile(request, function(err, content) {
     if (err) {
