@@ -26,7 +26,7 @@ const sendResponse = function(res, content, status) {
 
 /** This is a description of handleRequest function. */
 const handleRequest = function(req, res) {
-  if (req.url == "/guestBook.html") {
+  if (req.url == "/guestBook.html" || req.url == "/favicon.ico") {
     res.end();
     return;
   }
