@@ -88,7 +88,6 @@ const htmls = {
 
 const renderGuestBookPage = function(req, res) {
   readFile("./public_html/guestBook.html", "utf8", function(err, content) {
-    console.log(content, "in renderGuestBook");
     let guestBook = content.replace("#form#", htmls.guestBook);
     res.write(guestBook);
     res.end();
